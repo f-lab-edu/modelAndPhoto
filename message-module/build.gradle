@@ -1,11 +1,4 @@
+apply plugin: 'java'
 
-
-dependencies {
-}
-
-test {
-}
-
-bootJar {
-    enabled = false
-}
+group = 'com.flab'
+version = '0.0.1-SNAPSHOT'
