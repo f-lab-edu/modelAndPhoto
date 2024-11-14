@@ -1,0 +1,4 @@
+apply plugin: 'java'
+
+group = 'com.flab'
+version = '0.0.1-SNAPSHOT'
