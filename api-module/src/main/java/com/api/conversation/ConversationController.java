@@ -1,6 +1,10 @@
 package com.api.conversation;
 
-import com.api.message.Message;
+import com.api.conversation.dto.ConversationDto;
+import com.api.conversation.dto.ConversationResponse;
+import com.api.conversation.dto.UserConversationsResponse;
+import com.api.conversation.service.ConversationService;
+import com.api.message.dto.MessageDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +15,20 @@ import java.util.List;
 @RequestMapping("/api/v1/messages/conversations")
 public class ConversationController {
 
+    private final ConversationService conversationService;
+
+    public ConversationController(ConversationService conversationService) {
+        this.conversationService = conversationService;
+    }
+
+    private final String SESSION_USER_ID = "user_123";  // sessionUserId
+
     // 사용자 간 대화 목록 조회
     @GetMapping
     public ResponseEntity<UserConversationsResponse> getUserConversations() {
-        List<Conversation> conversations = List.of(
-                new Conversation("conv_123", List.of("user_123", "user_456"), LocalDateTime.now()),
-                new Conversation("conv_124", List.of("user_123", "user_789"), LocalDateTime.now())
-        );
+
+        List<ConversationDto> conversations = conversationService.retrieve(SESSION_USER_ID);
+
         UserConversationsResponse response = new UserConversationsResponse(conversations);
         return ResponseEntity.ok(response);
     }
@@ -26,14 +37,11 @@ public class ConversationController {
     @GetMapping(value = "/{conversation_id}", produces = "application/json")
     public ResponseEntity<ConversationResponse> getMessagesInConversation(
             @PathVariable("conversation_id") String conversationId,
-            @RequestParam("start") String startTime,
-            @RequestParam("end") String endTime) {
+            @RequestParam("start") LocalDateTime startTime,
+            @RequestParam("end") LocalDateTime endTime) {
 
-        List<Message> messages = List.of(
-                new Message("msg_789", "user_123", "user_456", "안녕하세요!", LocalDateTime.parse("2024-11-01T14:30:00"), true),
-                new Message("msg_790", "user_456", "user_123", "반갑습니다!", LocalDateTime.parse("2024-11-02T14:30:00"), false)
-        );
-        ConversationResponse response = new ConversationResponse(conversationId, messages);
-        return ResponseEntity.ok(response);
+        List<MessageDto> messageDtos = conversationService.retrieveMessageInConversation(conversationId, startTime, endTime);
+
+        return ResponseEntity.ok(new ConversationResponse(conversationId, messageDtos));
     }
 }

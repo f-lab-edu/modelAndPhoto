@@ -1,14 +1,14 @@
-package com.api.conversation;
+package com.api.conversation.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Conversation {
+public class ConversationDto {
     private String conversationId;
     private List<String> participantIds;
     private LocalDateTime lastMessageTimestamp;
 
-    public Conversation(String conversationId, List<String> participantIds, LocalDateTime lastMessageTimestamp) {
+    public ConversationDto(String conversationId, List<String> participantIds, LocalDateTime lastMessageTimestamp) {
         this.conversationId = conversationId;
         this.participantIds = participantIds;
         this.lastMessageTimestamp = lastMessageTimestamp;
