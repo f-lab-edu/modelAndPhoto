@@ -1,9 +1,14 @@
 package com.api.match;
 
+import com.api.match.dto.MatchingRequestDto;
+import com.api.match.dto.MatchRespondRequestDto;
+import com.api.match.enums.MatchingStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -13,7 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(MatchingController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class MatchingControllerTest {
 
     @Autowired
@@ -21,7 +27,7 @@ class MatchingControllerTest {
 
     @Test
     @DisplayName("매칭 가능한 사용자 목록 조회")
-    public void testGetMatchingUsers() throws Exception {
+    public void testRetrieveMatchingUsers() throws Exception {
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(get("/api/v1/matchings")
                         .accept(MediaType.APPLICATION_JSON))
@@ -39,12 +45,12 @@ class MatchingControllerTest {
     @DisplayName("매칭 요청 전송")
     public void testSendMatchRequest() throws Exception {
 
-        String requestBody = "{\"sender_id\":123, \"receiver_id\":456}";
+        MatchingRequestDto matchRequest = new MatchingRequestDto("123", "456");
 
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/matchings/request")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(new ObjectMapper().writeValueAsString(matchRequest)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.matchRequestId").exists())
@@ -54,7 +60,7 @@ class MatchingControllerTest {
 
     @Test
     @DisplayName("매칭 요청 목록 조회 (GET)")
-    public void testGetMatchRequests() throws Exception {
+    public void testRetrieveMatchRequests() throws Exception {
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(get("/api/v1/matchings/requests")
                         .accept(MediaType.APPLICATION_JSON))
@@ -71,15 +77,14 @@ class MatchingControllerTest {
     @DisplayName("매칭 요청 수락 또는 거절")
     public void testRespondToMatchRequest() throws Exception {
 
-        String responseStatus = "accepted";
-        String requestBody = "{\"request_id\":\"req_123\", \"response\":\"" + responseStatus + "\"}";
+        MatchRespondRequestDto request = new MatchRespondRequestDto("req_123", MatchingStatus.ACCEPTED);
 
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/matchings/respond")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(new ObjectMapper().writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(responseStatus));
+                .andExpect(jsonPath("$.status").value(request.getResponse().name()));
     }
 }

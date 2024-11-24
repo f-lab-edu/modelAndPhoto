@@ -1,12 +1,15 @@
-package com.api.match;
+package com.api.match.dto;
 
-public class MatchRequestDetail {
+import com.api.match.enums.MatchingStatus;
+import com.api.match.enums.UserRole;
+
+public class MatchingRequest {
     private final String requestId;
     private final String senderName;
-    private final String senderRole;
-    private final String status;
+    private final UserRole senderRole;
+    private final MatchingStatus status;
 
-    public MatchRequestDetail(String requestId, String senderName, String senderRole, String status) {
+    public MatchingRequest(String requestId, String senderName, UserRole senderRole, MatchingStatus status) {
         this.requestId = requestId;
         this.senderName = senderName;
         this.senderRole = senderRole;
@@ -21,11 +24,11 @@ public class MatchRequestDetail {
         return senderName;
     }
 
-    public String getSenderRole() {
+    public UserRole getSenderRole() {
         return senderRole;
     }
 
-    public String getStatus() {
+    public MatchingStatus getStatus() {
         return status;
     }
 }

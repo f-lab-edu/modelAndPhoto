@@ -1,19 +1,17 @@
-package com.api.match;
+package com.api.match.dto;
 
 import java.util.List;
 
-public class MatchingUser {
+public class MatchableUser {
 
-    private int userId;
+    private String userId;
     private String name;
     private String role;
     private String location;
     private List<String> style;
     private String introduce;
 
-    public MatchingUser() {}
-
-    public MatchingUser(int userId, String name, String role, String location, List<String> style, String introduce) {
+    public MatchableUser(String userId, String name, String role, String location, List<String> style, String introduce) {
         this.userId = userId;
         this.name = name;
         this.role = role;
@@ -22,7 +20,7 @@ public class MatchingUser {
         this.introduce = introduce;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 

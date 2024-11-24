@@ -1,45 +1,71 @@
 package com.api.match;
 
+import com.api.match.dto.*;
+import com.api.match.enums.MatchingStatus;
+import com.api.match.service.MatchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/matchings")
 public class MatchingController {
 
+    private final MatchService matchService;
+
+    public MatchingController(MatchService matchService) {
+        this.matchService = matchService;
+    }
+
+    private final String SESSION_USER_ID = "user_123";
+
     // 매칭 가능한 사용자 목록 조회
     @GetMapping
-    public ResponseEntity<MatchingUsersResponse> getMatchingUsers() {
-        List<MatchingUser> matches = List.of(
-                new MatchingUser(456, "김철수", "MODEL", "Seoul", List.of("fashion", "portrait"), "안녕하세요 김철수입니다."),
-                new MatchingUser(789, "뉴진스", "MODEL", "Busan", List.of("fashion", "portrait"), "안녕하세요 뉴진스입니다.")
-        );
-        MatchingUsersResponse response = new MatchingUsersResponse(matches);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<MatchableUsersResponse> retrieveMatchingUsers() {
+
+        List<MatchableUser> matchableUsers = matchService.retrieveMatchableUsers(SESSION_USER_ID);// 세션사용자 Id로 조회
+
+        List<MatchableResponse> matchingUsersResponses = new ArrayList<>();
+
+        for (MatchableUser matchableUser : matchableUsers) {
+            matchingUsersResponses.add(new MatchableResponse(matchableUser.getUserId()
+                                                                , matchableUser.getName()
+                                                                , matchableUser.getRole()
+                                                                , matchableUser.getLocation()
+                                                                , matchableUser.getStyle()
+                                                                , matchableUser.getIntroduce()));
+        }
+
+        return ResponseEntity.ok(new MatchableUsersResponse(matchingUsersResponses));
     }
 
     // 매칭 요청 전송
     @PostMapping("/request")
-    public ResponseEntity<MatchRequestResponse> sendMatchRequest(@RequestBody MatchRequest request) {
-        return ResponseEntity.ok(new MatchRequestResponse("req_789", "pending"));
+    public ResponseEntity<MatchRequestResponse> sendMatchRequest(@RequestBody @Valid MatchingRequestDto request) {
+
+        matchService.sendRequestMatch(new MatchingCreationRequest(request.getSenderId(), request.getReceiverId()));
+
+        return ResponseEntity.ok(new MatchRequestResponse(request.getSenderId(), MatchingStatus.PENDING));
     }
 
     // 매칭 요청 목록 조회 (GET)
     @GetMapping("/requests")
-    public ResponseEntity<MatchRequestsResponse> getMatchRequests() {
-        List<MatchRequestDetail> requests = List.of(
-                new MatchRequestDetail("req_789", "박성수", "PHOTOGRAPHER", "pending"),
-                new MatchRequestDetail("req_456", "홍길동", "PHOTOGRAPHER", "pending")
-        );
-        MatchRequestsResponse response = new MatchRequestsResponse(requests);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<MatchRequestsResponse> retrieveMatchRequests() {
+
+        List<MatchingRequest> matchingRequests = matchService.retrieveMatchingRequests(SESSION_USER_ID);
+
+        return ResponseEntity.ok(new MatchRequestsResponse(matchingRequests));
     }
 
     // 매칭 요청 수락 또는 거절 응답 전송
     @PostMapping("/respond")
-    public ResponseEntity<MatchResponse> respondToMatchRequest(@RequestBody MatchRespondRequest request) {
-        return ResponseEntity.ok(new MatchResponse("accepted"));
+    public ResponseEntity<MatchResponse> respondToMatchRequest(@RequestBody @Valid MatchRespondRequestDto request) {
+
+        matchService.respondToMatchRequest(new MatchRespondRequest(request.getRequestId(), request.getResponse()));
+
+        return ResponseEntity.ok(new MatchResponse(request.getResponse()));
     }
 }
