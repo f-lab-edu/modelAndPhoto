@@ -1,17 +1,19 @@
-package com.api.message;
+package com.api.message.dto;
+
+import com.api.message.enums.MessageStatus;
 
 import java.time.LocalDateTime;
 
-public class Message {
+public class MessageDto {
 
     private String messageId;
     private String senderId;
     private String receiverId;
     private String messageContent;
     private LocalDateTime timestamp;
-    private boolean readStatus;
+    private MessageStatus readStatus;
 
-    public Message(String messageId, String senderId, String receiverId, String messageContent, LocalDateTime timestamp, boolean readStatus) {
+    public MessageDto(String messageId, String senderId, String receiverId, String messageContent, LocalDateTime timestamp, MessageStatus readStatus) {
         this.messageId = messageId;
         this.senderId = senderId;
         this.receiverId = receiverId;
@@ -40,7 +42,7 @@ public class Message {
         return timestamp;
     }
 
-    public boolean isReadStatus() {
+    public MessageStatus getReadStatus() {
         return readStatus;
     }
 }

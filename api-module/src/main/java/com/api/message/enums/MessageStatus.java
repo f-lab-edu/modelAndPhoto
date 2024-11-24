@@ -1,4 +1,4 @@
-package com.api.message;
+package com.api.message.enums;
 
 public enum MessageStatus {
 

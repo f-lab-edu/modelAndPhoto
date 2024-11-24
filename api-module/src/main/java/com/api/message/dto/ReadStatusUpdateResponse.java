@@ -1,4 +1,6 @@
-package com.api.message;
+package com.api.message.dto;
+
+import com.api.message.enums.MessageStatus;
 
 import java.time.LocalDateTime;
 
