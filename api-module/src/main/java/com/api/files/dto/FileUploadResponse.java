@@ -1,12 +1,12 @@
-package com.api.files;
+package com.api.files.dto;
 
 import java.time.LocalDateTime;
 
 public class FileUploadResponse {
 
-    private String fileId;
-    private String fileUrl;
-    private LocalDateTime uploadedTime;
+    private final String fileId;
+    private final String fileUrl;
+    private final LocalDateTime uploadedTime;
 
     public FileUploadResponse(String fileId, String fileUrl, LocalDateTime uploadedTime) {
         this.fileId = fileId;

@@ -3,21 +3,20 @@ package com.api.files;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.core.io.Resource;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(FileController.class)
+
+@SpringBootTest
+@AutoConfigureMockMvc
 class FileControllerTest {
 
     @Autowired
@@ -57,6 +56,7 @@ class FileControllerTest {
                 .accept(MediaType.APPLICATION_OCTET_STREAM)) // 바이너리 데이터
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", "application/octet-stream"));
+                .andExpect(header().string("Content-Type", "application/octet-stream"))
+                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM));
     }
 }
