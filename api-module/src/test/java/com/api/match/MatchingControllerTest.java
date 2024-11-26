@@ -1,8 +1,8 @@
 package com.api.match;
 
-import com.api.match.dto.MatchingRequestDto;
-import com.api.match.dto.MatchRespondRequestDto;
-import com.api.match.enums.MatchingStatus;
+import com.api.dto.match.MatchingRequestDto;
+import com.api.dto.match.MatchRespondRequestDto;
+import com.api.enums.MatchingStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

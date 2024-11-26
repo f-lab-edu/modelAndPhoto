@@ -1,18 +1,15 @@
 package com.api.message;
 
-import com.api.message.dto.MessageRequestDto;
-import com.api.message.enums.MessageStatus;
+import com.api.dto.message.MessageRequestDto;
+import com.api.enums.MessageStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.validation.constraints.NotBlank;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,7 +29,7 @@ class MessageControllerTest {
         // 요청 (JSON)
         String senderId = "user_123";
         String receiverId = "user_456";
-        
+
         MessageRequestDto requestDto = new MessageRequestDto(senderId, receiverId, "안녕하세요!", "");
 
 
