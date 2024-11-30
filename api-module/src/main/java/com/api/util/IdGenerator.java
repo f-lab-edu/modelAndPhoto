@@ -13,6 +13,10 @@ import org.springframework.stereotype.Component;
 public class IdGenerator {
 
     public String generateId(IdPrefix prefix) {
+        if (prefix == null) {
+            throw new IllegalArgumentException("prefix is null");
+        }
+
         return prefix + "_" + java.util.UUID.randomUUID().toString();
     }
 }
