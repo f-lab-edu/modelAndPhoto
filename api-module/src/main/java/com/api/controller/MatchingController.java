@@ -2,6 +2,7 @@ package com.api.controller;
 
 import com.api.dto.match.*;
 import com.api.enums.MatchingStatus;
+import com.api.dto.match.MatchRespondResponse;
 import com.api.service.MatchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,12 @@ public class MatchingController {
         this.matchService = matchService;
     }
 
-    private final String SESSION_USER_ID = "user_123";
+    private final String SESSION_USER_ID = "PHO_001";
 
-    // 매칭 가능한 사용자 목록 조회
+    /**
+     * 매칭 가능한 유저 목록 조회
+     * @return MatchableUsersResponse
+     */
     @GetMapping
     public ResponseEntity<MatchableUsersResponse> retrieveMatchingUsers() {
 
@@ -42,16 +46,23 @@ public class MatchingController {
         return ResponseEntity.ok(new MatchableUsersResponse(matchingUsersResponses));
     }
 
-    // 매칭 요청 전송
+    /**
+     * 매칭요청 전송
+     * @param request
+     * @return
+     */
     @PostMapping("/request")
     public ResponseEntity<MatchRequestResponse> sendMatchRequest(@RequestBody @Valid MatchingRequestDto request) {
 
-        matchService.sendRequestMatch(new MatchingCreationRequest(request.getSenderId(), request.getReceiverId()));
+        MatchingCreationResponse matchingCreationResponse = matchService.sendRequestMatch(new MatchingCreationRequest(request.getSenderId(), request.getReceiverId(), request.getMessage()));
 
-        return ResponseEntity.ok(new MatchRequestResponse(request.getSenderId(), MatchingStatus.PENDING));
+        return ResponseEntity.ok(new MatchRequestResponse(matchingCreationResponse.getMatchRequestId(), matchingCreationResponse.getStatus()));
     }
 
-    // 매칭 요청 목록 조회 (GET)
+    /**
+     * 매칭요청 목록 조회
+     * @return
+     */
     @GetMapping("/requests")
     public ResponseEntity<MatchRequestsResponse> retrieveMatchRequests() {
 
@@ -60,12 +71,16 @@ public class MatchingController {
         return ResponseEntity.ok(new MatchRequestsResponse(matchingRequests));
     }
 
-    // 매칭 요청 수락 또는 거절 응답 전송
+    /**
+     * 매칭 요청 수락 또는 거절 응답 전송
+     * @param request
+     * @return
+     */
     @PostMapping("/respond")
     public ResponseEntity<MatchResponse> respondToMatchRequest(@RequestBody @Valid MatchRespondRequestDto request) {
 
-        matchService.respondToMatchRequest(new MatchRespondRequest(request.getRequestId(), request.getResponse()));
+        MatchRespondResponse matchRespondResponse = matchService.respondToMatchRequest(new MatchRespondRequest(request.getRequestId(), request.getResponse()));
 
-        return ResponseEntity.ok(new MatchResponse(request.getResponse()));
+        return ResponseEntity.ok(new MatchResponse(matchRespondResponse.getMatchRequestId(), matchRespondResponse.getStatus()));
     }
 }

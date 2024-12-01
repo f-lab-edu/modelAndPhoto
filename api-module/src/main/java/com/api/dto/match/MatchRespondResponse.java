@@ -2,12 +2,12 @@ package com.api.dto.match;
 
 import com.api.enums.MatchingStatus;
 
-public class MatchResponse {
+public class MatchRespondResponse {
 
     private final String matchRequestId;
     private final MatchingStatus status;
 
-    public MatchResponse(String matchRequestId, MatchingStatus status) {
+    public MatchRespondResponse(String matchRequestId, MatchingStatus status) {
         this.matchRequestId = matchRequestId;
         this.status = status;
     }
