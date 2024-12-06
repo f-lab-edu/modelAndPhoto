@@ -9,18 +9,19 @@ import com.api.repository.ConversationRepository;
 import com.api.repository.MessageRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ConversationServiceTest {
 
     @InjectMocks
@@ -50,6 +51,9 @@ class ConversationServiceTest {
                 assertThat(conversationDto.getParticipantIds()).contains(sessionUserId);
             }
         }
+
+        // verify
+        verify(conversationRepository, times(1)).retrieve(sessionUserId);
     }
 
     @Test
@@ -73,6 +77,9 @@ class ConversationServiceTest {
                 assertThat(messageDto.getTimestamp()).isBefore(endTime).isAfter(startTime);
             }
         }
+
+        // verify
+        verify(messageRepository, times(1)).retrieveMessageInConversation(any(String.class), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
     // 대화방 엔티티 목록

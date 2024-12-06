@@ -1,7 +1,6 @@
 package com.api.service;
 
 import com.api.dto.message.ConversationMessageStatusResponse;
-import com.api.enums.IdPrefix;
 import com.api.repository.ConversationRepository;
 import com.api.dto.message.MessageRequest;
 import com.api.dto.message.MessageResponse;
@@ -18,12 +17,10 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
     private final ConversationRepository conversationRepository;
-    private final IdGenerator idGenerator;
 
-    public MessageService(MessageRepository messageRepository, ConversationRepository conversationRepository, IdGenerator idGenerator) {
+    public MessageService(MessageRepository messageRepository, ConversationRepository conversationRepository) {
         this.messageRepository = messageRepository;
         this.conversationRepository = conversationRepository;
-        this.idGenerator = idGenerator;
     }
 
     public MessageResponse send(MessageRequest messageRequest) {
@@ -35,7 +32,7 @@ public class MessageService {
         }
 
         String conversationId = conversationRepository.getConversationId(messageRequest);
-        String generatedMessageId = idGenerator.generateId(IdPrefix.MSG);
+        String generatedMessageId = IdGenerator.generateId(IdGenerator.getPrefixMessage());
 
         if (conversationId == null) {
             conversationId = conversationRepository.createConversation(generatedMessageId, messageRequest);

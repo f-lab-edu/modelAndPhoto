@@ -3,7 +3,6 @@ package com.api.service;
 import com.api.dto.match.*;
 import com.api.entity.MatchingEntity;
 import com.api.entity.UserEntity;
-import com.api.enums.IdPrefix;
 import com.api.enums.MatchingStatus;
 import com.api.repository.MatchRepository;
 import com.api.repository.UserRepository;
@@ -19,12 +18,10 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final UserRepository userRepository;
-    private final IdGenerator idGenerator;
 
-    public MatchService(MatchRepository matchRepository, UserRepository userRepository, IdGenerator idGenerator) {
+    public MatchService(MatchRepository matchRepository, UserRepository userRepository) {
         this.matchRepository = matchRepository;
         this.userRepository = userRepository;
-        this.idGenerator = idGenerator;
     }
 
     public List<MatchableUser> retrieveMatchableUsers(String sessionUserId) {
@@ -40,7 +37,7 @@ public class MatchService {
     }
 
     public MatchingCreationResponse sendRequestMatch(MatchingCreationRequest request) {
-        MatchingEntity savedMatch = matchRepository.save(new MatchingEntity(idGenerator.generateId(IdPrefix.MAT), request.getSenderId(), "요청자이름", request.getReceiverId(), "수신자이름", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), request.getMessage()));
+        MatchingEntity savedMatch = matchRepository.save(new MatchingEntity(IdGenerator.generateId(IdGenerator.getPrefixMatching()), request.getSenderId(), "요청자이름", request.getReceiverId(), "수신자이름", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), request.getMessage()));
 
         return new MatchingCreationResponse(savedMatch.getMatchingId(), savedMatch.getStatus());
     }

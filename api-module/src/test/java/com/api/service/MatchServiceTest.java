@@ -3,26 +3,25 @@ package com.api.service;
 import com.api.dto.match.*;
 import com.api.entity.MatchingEntity;
 import com.api.entity.UserEntity;
-import com.api.enums.IdPrefix;
 import com.api.enums.MatchingStatus;
 import com.api.enums.UserRole;
 import com.api.repository.MatchRepository;
 import com.api.repository.UserRepository;
-import com.api.util.IdGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class MatchServiceTest {
 
     @InjectMocks
@@ -33,9 +32,6 @@ class MatchServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private IdGenerator idGenerator;
 
     @Test
     @DisplayName("매칭가능한 유저 목록을 조회한다. 매칭목록의 유저는 본인과 다른 Role이어야 한다.")
@@ -56,14 +52,15 @@ class MatchServiceTest {
             assertThat(matchableUser.getRole()).isNotEqualTo(sessionUserRole);
         });
 
+        // verify
+        verify(userRepository).retrieveMatchableUsers(any(String.class));
+
     }
 
     @Test
     @DisplayName("매칭요청을 전송한다. 전송시엔 상태값이 PENDING")
     void test_send_request_match() {
         // given
-        doReturn("MAT_001").when(idGenerator).generateId(IdPrefix.MAT);
-
         doReturn(new MatchingEntity("MAT_001", "MOD_001", "뉴진스",
                 "PHO_001", "박성수", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), "매칭수락 부탁드립니다."))
                 .when(matchRepository).save(any(MatchingEntity.class));
@@ -74,6 +71,9 @@ class MatchServiceTest {
         // then
         assertThat(matchingCreationResponse.getMatchRequestId()).isNotNull();
         assertThat(matchingCreationResponse.getStatus()).isEqualTo(MatchingStatus.PENDING);
+
+        // verify
+        verify(matchRepository, times(1)).save(any(MatchingEntity.class));
     }
 
     @Test
@@ -92,6 +92,9 @@ class MatchServiceTest {
             assertThat(matchingRequest.getRequestId()).isNotNull();
             assertThat(matchingRequest.getSenderRole()).isNotEqualTo(sessionUserRole);
         });
+
+        // verify
+        verify(matchRepository, times(1)).retrieveMatchingRequests(any(String.class));
     }
 
     @Test
@@ -111,6 +114,10 @@ class MatchServiceTest {
         // then
         assertThat(matchRespondResponse.getMatchRequestId()).isNotNull();
         assertThat(matchRespondResponse.getStatus()).isNotNull();
+
+        // verify
+        verify(matchRepository, times(1)).getMatching(any(String.class));
+        verify(matchRepository, times(1)).save(any(MatchingEntity.class));
     }
 
     private static List<MatchingEntity> getMatchingEntities() {
