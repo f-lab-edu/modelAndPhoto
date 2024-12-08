@@ -32,7 +32,7 @@ public class MessageService {
         }
 
         String conversationId = conversationRepository.getConversationId(messageRequest);
-        String generatedMessageId = IdGenerator.generateId(IdGenerator.getPrefixMessage());
+        String generatedMessageId = IdGenerator.getGenerateMessageId();
 
         if (conversationId == null) {
             conversationId = conversationRepository.createConversation(generatedMessageId, messageRequest);

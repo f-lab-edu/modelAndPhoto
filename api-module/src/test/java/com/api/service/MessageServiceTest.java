@@ -38,7 +38,7 @@ class MessageServiceTest {
     @DisplayName("메시지 전송 시 response에 conversationId가 생성된다.")
     void test_send() {
         // given
-        String generatedConversationID = IdGenerator.generateId(IdGenerator.getPrefixConversation());
+        String generatedConversationID = IdGenerator.getGenerateConversationId();
         MessageRequest messageRequest = new MessageRequest("MOD_123", "PHO_456", "메시지내용", null);
 
         doReturn(new MessageEntity("MSG_001", generatedConversationID, "MOD_123", "PHO_456", null, "메시지내용", LocalDateTime.now(), MessageStatus.SENT))

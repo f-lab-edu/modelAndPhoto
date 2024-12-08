@@ -37,7 +37,7 @@ public class MatchService {
     }
 
     public MatchingCreationResponse sendRequestMatch(MatchingCreationRequest request) {
-        MatchingEntity savedMatch = matchRepository.save(new MatchingEntity(IdGenerator.generateId(IdGenerator.getPrefixMatching()), request.getSenderId(), "요청자이름", request.getReceiverId(), "수신자이름", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), request.getMessage()));
+        MatchingEntity savedMatch = matchRepository.save(new MatchingEntity(IdGenerator.getGenerateMatchingId(), request.getSenderId(), "요청자이름", request.getReceiverId(), "수신자이름", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), request.getMessage()));
 
         return new MatchingCreationResponse(savedMatch.getMatchingId(), savedMatch.getStatus());
     }

@@ -8,36 +8,28 @@ package com.api.util;
  */
 public class IdGenerator {
 
-    public static String generateId(IdPrefix prefix) {
-        if (prefix == null) {
-            throw new IllegalArgumentException("prefix is null");
-        }
-
-        return prefix + "_" + java.util.UUID.randomUUID().toString();
+    public static String getGenerateModelId() {
+        return IdPrefix.MDL + "_" + java.util.UUID.randomUUID().toString();
     }
 
-    public static IdPrefix getPrefixModel() {
-        return IdPrefix.MDL;
+    public static String getGeneratePhotographerId() {
+        return IdPrefix.PHO + "_" + java.util.UUID.randomUUID().toString();
     }
 
-    public static IdPrefix getPrefixPhotographer() {
-        return IdPrefix.PHO;
+    public static String getGenerateMessageId() {
+        return IdPrefix.MSG + "_" + java.util.UUID.randomUUID().toString();
     }
 
-    public static IdPrefix getPrefixMessage() {
-        return IdPrefix.MSG;
+    public static String getGenerateConversationId() {
+        return IdPrefix.CON + "_" + java.util.UUID.randomUUID().toString();
     }
 
-    public static IdPrefix getPrefixConversation() {
-        return IdPrefix.CON;
+    public static String getGenerateMatchingId() {
+        return IdPrefix.MAT + "_" + java.util.UUID.randomUUID().toString();
     }
 
-    public static IdPrefix getPrefixMatching() {
-        return IdPrefix.MAT;
-    }
-
-    public static IdPrefix getPrefixFile() {
-        return IdPrefix.FIL;
+    public static String getGenerateFileId() {
+        return IdPrefix.FIL + "_" + java.util.UUID.randomUUID().toString();
     }
 
     public enum IdPrefix {
