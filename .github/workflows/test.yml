@@ -1,0 +1,43 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI Test with Gradle
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 0. Gradle 캐시 복원 (캐시를 가장 먼저 복원)
+      # - name: Cache Gradle dependencies
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.gradle/caches # Gradle 캐시 경로
+      #     key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-gradle-
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # # 2. Gradle Wrapper에 실행 권한 부여
+      # - name: Grant execute permission for Gradle Wrapper
+      #   run: chmod +x ./gradlew
+
+      # 3. Java 환경 설정
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+
+      # 4. Gradle 테스트 실행
+      - name: Run Gradle tests
+        run: ./gradlew test --no-daemon
