@@ -1,7 +1,6 @@
 package com.api.service;
 
 import com.api.dto.conversation.ConversationDto;
-import com.api.entity.ConversationEntity;
 import com.api.repository.ConversationRepository;
 import com.api.dto.message.MessageDto;
 import com.api.entity.MessageEntity;
@@ -24,14 +23,11 @@ public class ConversationService {
     }
 
     public List<ConversationDto> retrieve(String sessionUserId) {
-
-        List<ConversationEntity> conversationEntities = conversationRepository.retrieve(sessionUserId);
-
-        return conversationEntities.stream()
+        return conversationRepository.retrieve(sessionUserId).stream()
                 .map(conversationEntity -> new ConversationDto(
-                        conversationEntity.getConversationId()
-                        , conversationEntity.getParticipantIds()
-                        , conversationEntity.getLastMessageTimestamp()))
+                        conversationEntity.getConversationId(),
+                        conversationEntity.getParticipantIds(),
+                        conversationEntity.getLastMessageTimestamp()))
                 .collect(Collectors.toList());
     }
 
@@ -41,12 +37,12 @@ public class ConversationService {
 
         return messageEntities.stream()
                 .map(messageEntity -> new MessageDto(
-                          messageEntity.getMessageId()
-                        , messageEntity.getSenderId()
-                        , messageEntity.getReceiverId()
-                        , messageEntity.getMessageContent()
-                        , messageEntity.getTimestamp()
-                        , messageEntity.getMessageStatus()))
+                        messageEntity.getMessageId(),
+                        messageEntity.getSenderId(),
+                        messageEntity.getReceiverId(),
+                        messageEntity.getMessageContent(),
+                        messageEntity.getTimestamp(),
+                        messageEntity.getMessageStatus()))
                 .collect(Collectors.toList());
     }
 }

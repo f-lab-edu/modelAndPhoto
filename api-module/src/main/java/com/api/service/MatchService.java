@@ -1,13 +1,12 @@
 package com.api.service;
 
-import com.api.dto.match.MatchRespondRequest;
-import com.api.dto.match.MatchableUser;
-import com.api.dto.match.MatchingCreationRequest;
-import com.api.dto.match.MatchingRequest;
+import com.api.dto.match.*;
 import com.api.entity.MatchingEntity;
 import com.api.entity.UserEntity;
 import com.api.enums.MatchingStatus;
 import com.api.repository.MatchRepository;
+import com.api.repository.UserRepository;
+import com.api.util.IdGenerator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,13 +17,15 @@ import java.util.List;
 public class MatchService {
 
     private final MatchRepository matchRepository;
+    private final UserRepository userRepository;
 
-    public MatchService(MatchRepository matchRepository) {
+    public MatchService(MatchRepository matchRepository, UserRepository userRepository) {
         this.matchRepository = matchRepository;
+        this.userRepository = userRepository;
     }
 
     public List<MatchableUser> retrieveMatchableUsers(String sessionUserId) {
-        List<UserEntity> userEntities = matchRepository.retrieveMatchableUsers(sessionUserId);
+        List<UserEntity> userEntities = userRepository.retrieveMatchableUsers(sessionUserId);
 
         List<MatchableUser> matchableUsers = new ArrayList<>();
 
@@ -35,15 +36,14 @@ public class MatchService {
         return matchableUsers;
     }
 
-    public void sendRequestMatch(MatchingCreationRequest request) {
-        matchRepository.save(new MatchingEntity("req_123", request.getSenderId(), "요청자이름", request.getReceiverId(), "수신자이름", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), "매칭수락 부탁드립니다."));
+    public MatchingCreationResponse sendRequestMatch(MatchingCreationRequest request) {
+        MatchingEntity savedMatch = matchRepository.save(new MatchingEntity(IdGenerator.getGenerateMatchingId(), request.getSenderId(), "요청자이름", request.getReceiverId(), "수신자이름", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), request.getMessage()));
+
+        return new MatchingCreationResponse(savedMatch.getMatchingId(), savedMatch.getStatus());
     }
 
     public List<MatchingRequest> retrieveMatchingRequests(String sessionUserId) {
         List<MatchingEntity> matchingEntities = matchRepository.retrieveMatchingRequests(sessionUserId);
-
-//        matchingEntities.add(new MatchingEntity("req_789", "user_001", "윈터", "user_789", "박성수", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), "매칭 요청 수락해주세요!"));
-//        matchingEntities.add(new MatchingEntity("req_789", "user_002", "카리나", "user_789", "박성수", MatchingStatus.PENDING, LocalDateTime.now(), LocalDateTime.now(), "매칭 요청 수락해주세요!"));
 
         List<MatchingRequest> matchingRequests = new ArrayList<>();
 
@@ -54,12 +54,13 @@ public class MatchService {
         return matchingRequests;
     }
 
-    public void respondToMatchRequest(MatchRespondRequest matchRespondRequest) {
+    public MatchRespondResponse respondToMatchRequest(MatchRespondRequest matchRespondRequest) {
         MatchingEntity matchingEntity = matchRepository.getMatching(matchRespondRequest.getRequestId());
 
         matchingEntity.setStatus(matchRespondRequest.getMatchingStatus());
         matchingEntity.setUpdatedAt(LocalDateTime.now());
 
-        matchRepository.save(matchingEntity);
+        MatchingEntity updatedMatchingEntity = matchRepository.save(matchingEntity);
+        return new MatchRespondResponse(updatedMatchingEntity.getMatchingId(), updatedMatchingEntity.getStatus());
     }
 }

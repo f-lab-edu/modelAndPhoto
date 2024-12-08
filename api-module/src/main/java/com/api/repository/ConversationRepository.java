@@ -2,7 +2,6 @@ package com.api.repository;
 
 import com.api.entity.ConversationEntity;
 import com.api.dto.message.MessageRequest;
-import com.api.entity.MessageEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 public class ConversationRepository {
 
     private Map<String, ConversationEntity> conversationEntityMap = new HashMap<>();
-    private Map<String, MessageEntity> messageEntityMap = new HashMap<>();
 
     public List<ConversationEntity> retrieve(String sessionUserId) {
         return conversationEntityMap.values()
@@ -35,12 +33,10 @@ public class ConversationRepository {
                 .findAny().orElse(null);
     }
 
-    public String createConversation(MessageRequest messageRequest) {
+    public String createConversation(String newConversationId, MessageRequest messageRequest) {
 
-        String conversationId = "conv_123";  // todo
+        conversationEntityMap.put(newConversationId, new ConversationEntity(newConversationId, List.of(messageRequest.getSenderId(), messageRequest.getReceiverId()), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now()));
 
-        conversationEntityMap.put(conversationId, new ConversationEntity(conversationId, List.of(messageRequest.getSenderId(), messageRequest.getReceiverId()), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now()));
-
-        return conversationId;
+        return conversationEntityMap.get(newConversationId).getConversationId();
     }
 }

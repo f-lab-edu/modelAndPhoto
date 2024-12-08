@@ -1,7 +1,6 @@
 package com.api.controller;
 
 import com.api.dto.message.*;
-import com.api.enums.MessageStatus;
 import com.api.service.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +35,10 @@ public class MessageController {
             @PathVariable("conversation_id") String conversationId
             , @RequestBody ReadStatusUpdateRequest request) {
 
-        messageService.updateStatusRead(conversationId, request.getReaderId());
+        ConversationMessageStatusResponse conversationMessageStatusResponse = messageService.updateStatusRead(conversationId, request.getReaderId());
 
-        return ResponseEntity.ok(new ReadStatusUpdateResponse(conversationId, MessageStatus.READ, LocalDateTime.now()));
+        return ResponseEntity.ok(new ReadStatusUpdateResponse(conversationMessageStatusResponse.getConversationId(),
+                                                            conversationMessageStatusResponse.getMessageStatus(),
+                                                            LocalDateTime.now()));
     }
 }

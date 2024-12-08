@@ -1,17 +1,19 @@
 package com.api.dto.match;
 
+import com.api.enums.UserRole;
+
 import java.util.List;
 
 public class MatchableUser {
 
     private String userId;
     private String name;
-    private String role;
+    private UserRole role;
     private String location;
     private List<String> style;
     private String introduce;
 
-    public MatchableUser(String userId, String name, String role, String location, List<String> style, String introduce) {
+    public MatchableUser(String userId, String name, UserRole role, String location, List<String> style, String introduce) {
         this.userId = userId;
         this.name = name;
         this.role = role;
@@ -28,7 +30,7 @@ public class MatchableUser {
         return name;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 

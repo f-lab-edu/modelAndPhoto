@@ -45,7 +45,7 @@ class MatchingControllerTest {
     @DisplayName("매칭 요청 전송")
     public void testSendMatchRequest() throws Exception {
 
-        MatchingRequestDto matchRequest = new MatchingRequestDto("123", "456");
+        MatchingRequestDto matchRequest = new MatchingRequestDto("MOD_123", "PHO_001", "매칭 요청합니다.");
 
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/matchings/request")
@@ -77,7 +77,7 @@ class MatchingControllerTest {
     @DisplayName("매칭 요청 수락 또는 거절")
     public void testRespondToMatchRequest() throws Exception {
 
-        MatchRespondRequestDto request = new MatchRespondRequestDto("req_123", MatchingStatus.ACCEPTED);
+        MatchRespondRequestDto request = new MatchRespondRequestDto("MAT_123", MatchingStatus.ACCEPTED);
 
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/matchings/respond")
