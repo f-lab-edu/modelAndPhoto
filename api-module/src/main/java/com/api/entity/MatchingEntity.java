@@ -6,18 +6,18 @@ import java.time.LocalDateTime;
 
 public class MatchingEntity {
 
-    public String matchingId; // Primary Key
-    public String senderId; // 요청을 보낸 사용자 ID
-    public String senderName; // 요청을 보낸 사용자 이름
-    public String receiverId; // 요청을 받은 사용자 ID
-    public String receiverName; // 요청을 받은 사용자 이름
-    public MatchingStatus status; // 매칭 상태 (PENDING, ACCEPTED, REJECTED)
-    public LocalDateTime createdAt; // 생성 시간
-    public LocalDateTime updatedAt; // 업데이트 시간
-    public String message; // 요청 메시지 (선택적)
+    private String matchingId; // Primary Key
+    private String senderId; // 요청을 보낸 사용자 ID
+    private String senderName; // 요청을 보낸 사용자 이름
+    private String receiverId; // 요청을 받은 사용자 ID
+    private String receiverName; // 요청을 받은 사용자 이름
+    private MatchingStatus status; // 매칭 상태 (PENDING, ACCEPTED, REJECTED)
+    private LocalDateTime createdAt; // 생성 시간
+    private LocalDateTime updatedAt; // 업데이트 시간
+    private String message; // 요청 메시지 (선택적)
 
-    public MatchingEntity(String reqId, String senderId, String senderName, String receiverId, String receiverName, MatchingStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, String message) {
-        this.matchingId = reqId;
+    public MatchingEntity(String matchingId, String senderId, String senderName, String receiverId, String receiverName, MatchingStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, String message) {
+        this.matchingId = matchingId;
         this.senderId = senderId;
         this.senderName = senderName;
         this.receiverId = receiverId;

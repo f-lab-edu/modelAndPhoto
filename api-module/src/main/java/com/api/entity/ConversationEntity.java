@@ -5,15 +5,15 @@ import java.util.List;
 
 public class ConversationEntity {
 
-    public String conversationId; // Primary Key
+    private String conversationId; // Primary Key
 
-    public List<String> participantIds; // 대화 참여자 ID 리스트
+    private List<String> participantIds; // 대화 참여자 ID 리스트
 
-    public LocalDateTime lastMessageTimestamp; // 마지막 메시지 시간
+    private LocalDateTime lastMessageTimestamp; // 마지막 메시지 시간
 
-    public LocalDateTime createdAt; // 생성 시간
+    private LocalDateTime createdAt; // 생성 시간
 
-    public LocalDateTime updatedAt; // 업데이트 시간
+    private LocalDateTime updatedAt; // 업데이트 시간
 
     public ConversationEntity(String conversationId, List<String> participantIds, LocalDateTime lastMessageTimestamp, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.conversationId = conversationId;

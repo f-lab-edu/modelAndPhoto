@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,9 +29,9 @@ class ConversationControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.conversations[0].conversationId").exists())
-                .andExpect(jsonPath("$.conversations[0].participantIds[0]").exists())
-                .andExpect(jsonPath("$.conversations[0].lastMessageTimestamp").exists());
+                .andExpect(jsonPath("$.conversationDtos[0].conversationId").exists())
+                .andExpect(jsonPath("$.conversationDtos[0].participantIds[0]").exists())
+                .andExpect(jsonPath("$.conversationDtos[0].lastMessageTimestamp").exists());
     }
 
 
@@ -41,7 +40,7 @@ class ConversationControllerTest {
     public void testGetMessagesInConversation() throws Exception {
 
         // MockMvc를 사용하여 요청을 보냄
-        String convId = "conv_123";
+        String convId = "CON_123";
 
         mockMvc.perform(get("/api/v1/messages/conversations/" + convId)
                         .param("start", "2024-11-01T00:00:00")
