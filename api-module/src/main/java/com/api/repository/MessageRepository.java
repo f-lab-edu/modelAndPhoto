@@ -17,18 +17,17 @@ public class MessageRepository {
         return messageEntityMap.put(messageEntity.getMessageId(), messageEntity);
     }
 
-    public void updateStatusRead(String conversationId, String readerId) {
-
-        messageEntityMap.values().stream()
+    public MessageEntity updateStatusRead(String conversationId, String readerId) {
+        return messageEntityMap.values().stream()
                 .filter(entity -> entity.getConversationId().equals(conversationId) && entity.getReceiverId().equals(readerId))
-                .forEach(entity -> {
+                .peek(entity -> {
                     entity.setMessageStatus(MessageStatus.READ);
                     messageEntityMap.put(entity.getMessageId(), entity);
-                });
+                }).collect(Collectors.toList()).get(0);
+
     }
 
     public List<MessageEntity> retrieveMessageInConversation(String conversationId, LocalDateTime startTime, LocalDateTime endTime) {
-
         return messageEntityMap.values()
                 .stream()
                 .filter(m -> m.getConversationId().equals(conversationId))

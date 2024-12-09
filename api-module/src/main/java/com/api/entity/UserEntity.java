@@ -1,17 +1,19 @@
 package com.api.entity;
 
+import com.api.enums.UserRole;
+
 import java.util.List;
 
 public class UserEntity {
 
-    public String userId;
-    public String name;
-    public String role;
-    public String location;
-    public List<String> style;
-    public String introduce;
+    private String userId;
+    private String name;
+    private UserRole role;
+    private String location;
+    private List<String> style;
+    private String introduce;
 
-    public UserEntity(String userId, String name, String role, String location, List<String> style, String introduce) {
+    public UserEntity(String userId, String name, UserRole role, String location, List<String> style, String introduce) {
         this.userId = userId;
         this.name = name;
         this.role = role;
@@ -28,7 +30,7 @@ public class UserEntity {
         return name;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 

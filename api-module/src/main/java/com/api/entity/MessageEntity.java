@@ -6,14 +6,14 @@ import java.time.LocalDateTime;
 
 public class MessageEntity {
 
-    public String messageId;
-    public String conversationId;
-    public String senderId;
-    public String receiverId;
-    public String fileId;
-    public String messageContent;
-    public LocalDateTime timestamp;
-    public MessageStatus messageStatus;
+    private String messageId;
+    private String conversationId;
+    private String senderId;
+    private String receiverId;
+    private String fileId;
+    private String messageContent;
+    private LocalDateTime timestamp;
+    private MessageStatus messageStatus;
 
     public MessageEntity(String messageId, String conversationId, String senderId, String receiverId, String fileId, String messageContent, LocalDateTime timestamp, MessageStatus messageStatus) {
         this.messageId = messageId;

@@ -22,9 +22,13 @@ public class ConversationController {
         this.conversationService = conversationService;
     }
 
-    private final String SESSION_USER_ID = "user_123";  // sessionUserId
+    private final String SESSION_USER_ID = "PHO_001";  // sessionUserId
 
-    // 사용자 간 대화 목록 조회
+
+    /**
+     * 사용자 간 대화 목록 조회 (SESSION_USER_ID 로 조회)
+     * @return UserConversationsResponse
+     */
     @GetMapping
     public ResponseEntity<UserConversationsResponse> getUserConversations() {
 
@@ -33,8 +37,16 @@ public class ConversationController {
         return ResponseEntity.ok(new UserConversationsResponse(conversations));
     }
 
-    // 대화 내 메시지 조회 (시간별 range 조회)
-    @GetMapping(value = "/{conversation_id}")
+
+
+    /**
+     * 대화 내 메시지 조회
+     * @param conversationId (대화방Id)
+     * @param startTime (대화시작시간)
+     * @param endTime   (대화종료시간)
+     * @return ConversationResponse
+     */
+    @GetMapping(value = "/{conversation_id}", produces = "application/json")
     public ResponseEntity<ConversationResponse> getMessagesInConversation(
             @PathVariable("conversation_id") String conversationId,
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
