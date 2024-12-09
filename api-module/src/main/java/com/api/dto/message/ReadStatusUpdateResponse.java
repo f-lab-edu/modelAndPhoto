@@ -10,9 +10,9 @@ public class ReadStatusUpdateResponse {
     private final MessageStatus status;
     private final LocalDateTime timestamp;
 
-    public ReadStatusUpdateResponse(String conversationId, MessageStatus status, LocalDateTime timestamp) {
-        this.conversationId = conversationId;
-        this.status = status;
+    public ReadStatusUpdateResponse(ConversationMessageStatusResponse conversationMessageStatusResponse, LocalDateTime timestamp) {
+        this.conversationId = conversationMessageStatusResponse.getConversationId();
+        this.status = conversationMessageStatusResponse.getMessageStatus();
         this.timestamp = timestamp;
     }
 

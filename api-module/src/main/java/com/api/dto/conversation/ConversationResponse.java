@@ -18,7 +18,7 @@ public class ConversationResponse {
         return conversationId;
     }
 
-    public List<MessageDto> getMessages() {
+    public List<MessageDto> getMessageDtos() {
         return messageDtos;
     }
 }

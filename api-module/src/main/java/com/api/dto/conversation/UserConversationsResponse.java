@@ -10,7 +10,7 @@ public class UserConversationsResponse {
         this.conversationDtos = conversationDtos;
     }
 
-    public List<ConversationDto> getConversations() {
+    public List<ConversationDto> getConversationDtos() {
         return conversationDtos;
     }
 }

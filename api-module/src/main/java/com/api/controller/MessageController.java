@@ -37,8 +37,6 @@ public class MessageController {
 
         ConversationMessageStatusResponse conversationMessageStatusResponse = messageService.updateStatusRead(conversationId, request.getReaderId());
 
-        return ResponseEntity.ok(new ReadStatusUpdateResponse(conversationMessageStatusResponse.getConversationId(),
-                                                            conversationMessageStatusResponse.getMessageStatus(),
-                                                            LocalDateTime.now()));
+        return ResponseEntity.ok(new ReadStatusUpdateResponse(conversationMessageStatusResponse, LocalDateTime.now()));
     }
 }
