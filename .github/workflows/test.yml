@@ -8,12 +8,26 @@
 name: Java CI Test with Gradle
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  [push, pull_request]
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        container_name: mysql_container
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: root1234
+          MYSQL_DATABASE: mydatabase
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypassword
+        ports:
+          - "3306:3306"
+        volumes:
+          - mysql_data:/var/lib/mysql
 
     steps:
       # 1. 코드 체크아웃
