@@ -2,10 +2,7 @@ package com.api.match;
 
 import com.api.controller.MatchingController;
 import com.api.dto.conversation.ConversationDto;
-import com.api.dto.match.MatchableUser;
-import com.api.dto.match.MatchingRequest;
-import com.api.dto.match.MatchingRequestDto;
-import com.api.dto.match.MatchRespondRequestDto;
+import com.api.dto.match.*;
 import com.api.enums.MatchingStatus;
 import com.api.enums.UserRole;
 import com.api.service.MatchService;
@@ -67,6 +64,11 @@ class MatchingControllerTest {
 
         MatchingRequestDto matchRequest = new MatchingRequestDto("MOD_123", "PHO_001", "매칭 요청합니다.");
 
+        // Mock Service behavior
+        when(matchService.sendRequestMatch(any(MatchingCreationRequest.class)))
+                .thenReturn(new MatchingCreationResponse("MAT_001", MatchingStatus.PENDING));
+
+
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/matchings/request")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,6 +105,9 @@ class MatchingControllerTest {
     public void testRespondToMatchRequest() throws Exception {
 
         MatchRespondRequestDto request = new MatchRespondRequestDto("MAT_123", MatchingStatus.ACCEPTED);
+
+        when(matchService.respondToMatchRequest(any(MatchRespondRequest.class)))
+                .thenReturn(new MatchRespondResponse("MAT_001", MatchingStatus.ACCEPTED));
 
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/matchings/respond")

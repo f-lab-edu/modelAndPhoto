@@ -1,8 +1,6 @@
 package com.api.message;
 
-import com.api.dto.message.MessageRequest;
-import com.api.dto.message.MessageRequestDto;
-import com.api.dto.message.MessageResponse;
+import com.api.dto.message.*;
 import com.api.enums.MessageStatus;
 import com.api.service.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,17 +62,19 @@ class MessageControllerTest {
     @Test
     @DisplayName("대화방 메시지 읽음 상태 업데이트")
     public void testUpdateReadStatus() throws Exception {
-        // 요청 (JSON)
-        String requestBody = "{\"reader_id\":\"user_456\"}";
+        String conversationId = "CON_001";
+        ReadStatusUpdateRequest readStatusUpdateRequest = new ReadStatusUpdateRequest(conversationId);
+
+        when(messageService.updateStatusRead(any(String.class), any(String.class)))
+                .thenReturn(new ConversationMessageStatusResponse(conversationId, MessageStatus.READ));
 
         // MockMvc를 사용하여 요청을 보냄
-        String convId = "conv_123";
-        mockMvc.perform(post("/api/v1/messages/conversations/" + convId + "/read")
+        mockMvc.perform(post("/api/v1/messages/conversations/" + conversationId + "/read")
                         .contentType(MediaType.APPLICATION_JSON)  // 요청의 Content-Type 설정
-                        .content(requestBody))                    // 요청 본문 설정
+                        .content(new ObjectMapper().writeValueAsBytes(readStatusUpdateRequest)))                    // 요청 본문 설정
                 .andDo(print())                                   // 요청과 응답을 콘솔에 출력
                 .andExpect(status().isOk())                       // 응답 상태 코드가 200 OK인지 확인
-                .andExpect(jsonPath("$.conversationId").value(convId))      // 응답 JSON에서 conversation_id 확인
+                .andExpect(jsonPath("$.conversationId").value(conversationId))      // 응답 JSON에서 conversation_id 확인
                 .andExpect(jsonPath("$.status").value(MessageStatus.READ.name()))  // 응답 JSON에서 status 확인
                 .andExpect(jsonPath("$.timestamp").exists());                // 응답 JSON에서 timestamp가 있는지 확인
     }
