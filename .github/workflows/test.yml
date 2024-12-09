@@ -17,17 +17,13 @@ jobs:
     services:
       mysql:
         image: mysql:8.0
-        container_name: mysql_container
-        restart: always
-        environment:
+        env:
           MYSQL_ROOT_PASSWORD: root1234
           MYSQL_DATABASE: mydatabase
           MYSQL_USER: myuser
           MYSQL_PASSWORD: mypassword
         ports:
           - "3306:3306"
-        volumes:
-          - mysql_data:/var/lib/mysql
 
     steps:
       # 1. 코드 체크아웃
@@ -43,4 +39,10 @@ jobs:
 
       # 3. Gradle 테스트 실행
       - name: Run Gradle tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
+          DB_NAME: mydatabase
+          DB_USER: myuser
+          DB_PASSWORD: mypassword
         run: ./gradlew test --no-daemon
