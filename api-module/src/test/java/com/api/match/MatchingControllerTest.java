@@ -2,6 +2,7 @@ package com.api.match;
 
 import com.api.controller.MatchingController;
 import com.api.dto.conversation.ConversationDto;
+import com.api.dto.match.MatchableUser;
 import com.api.dto.match.MatchingRequest;
 import com.api.dto.match.MatchingRequestDto;
 import com.api.dto.match.MatchRespondRequestDto;
@@ -42,6 +43,11 @@ class MatchingControllerTest {
     @Test
     @DisplayName("매칭 가능한 사용자 목록 조회")
     public void testRetrieveMatchingUsers() throws Exception {
+
+        // Mock Service behavior
+        when(matchService.retrieveMatchableUsers(any(String.class))).thenReturn(
+                List.of(new MatchableUser("PHO_001", "아이유", UserRole.MODEL, "Seoul", List.of("fashion"), "안녕하세요")));
+
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(get("/api/v1/matchings")
                         .accept(MediaType.APPLICATION_JSON))
