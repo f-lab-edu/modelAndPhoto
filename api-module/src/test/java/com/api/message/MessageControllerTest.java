@@ -1,16 +1,24 @@
 package com.api.message;
 
+import com.api.dto.message.MessageRequest;
 import com.api.dto.message.MessageRequestDto;
+import com.api.dto.message.MessageResponse;
 import com.api.enums.MessageStatus;
+import com.api.service.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,14 +31,20 @@ class MessageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private MessageService messageService;
+
     @Test
     @DisplayName("메시지 전송")
     public void testSendMessage() throws Exception {
         // 요청 (JSON)
-        String senderId = "user_123";
-        String receiverId = "user_456";
+        String senderId = "MOD_123";
+        String receiverId = "PHO_456";
 
         MessageRequestDto requestDto = new MessageRequestDto(senderId, receiverId, "안녕하세요!", "");
+
+        when(messageService.send(any(MessageRequest.class)))
+                .thenReturn(new MessageResponse("MSG_001", "CON_001", senderId, receiverId, LocalDateTime.now(), MessageStatus.SENT));
 
 
         // MockMvc를 사용하여 요청을 보냄
@@ -39,6 +53,8 @@ class MessageControllerTest {
                 .content(new ObjectMapper().writeValueAsBytes(requestDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.messageId").exists())
+                .andExpect(jsonPath("$.conversationId").exists())
                 .andExpect(jsonPath("$.senderId").value(senderId))
                 .andExpect(jsonPath("$.receiverId").value(receiverId))
                 .andExpect(jsonPath("$.timestamp").exists())

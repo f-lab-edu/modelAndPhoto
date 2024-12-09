@@ -5,6 +5,7 @@ import com.api.dto.conversation.ConversationResponse;
 import com.api.dto.conversation.UserConversationsResponse;
 import com.api.service.ConversationService;
 import com.api.dto.message.MessageDto;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,16 +30,15 @@ public class ConversationController {
 
         List<ConversationDto> conversations = conversationService.retrieve(SESSION_USER_ID);
 
-        UserConversationsResponse response = new UserConversationsResponse(conversations);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new UserConversationsResponse(conversations));
     }
 
     // 대화 내 메시지 조회 (시간별 range 조회)
-    @GetMapping(value = "/{conversation_id}", produces = "application/json")
+    @GetMapping(value = "/{conversation_id}")
     public ResponseEntity<ConversationResponse> getMessagesInConversation(
             @PathVariable("conversation_id") String conversationId,
-            @RequestParam("start") LocalDateTime startTime,
-            @RequestParam("end") LocalDateTime endTime) {
+            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
+            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
 
         List<MessageDto> messageDtos = conversationService.retrieveMessageInConversation(conversationId, startTime, endTime);
 
