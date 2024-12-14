@@ -50,7 +50,7 @@ jobs:
           DB_NAME: mydatabase
           DB_USER: myuser
           DB_PASSWORD: mypassword
-        run:
+        run: |
           if [ -z "$AWS_ACCESS_KEY_ID" ]; then
           echo "AWS_ACCESS_KEY_ID is not set!"
           exit 1
