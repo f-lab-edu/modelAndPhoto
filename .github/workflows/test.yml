@@ -51,8 +51,8 @@ jobs:
           DB_USER: myuser
           DB_PASSWORD: mypassword
         run: |
-          if [ -z "$AWS_ACCESS_KEY_ID" ]; then
-          echo "AWS_ACCESS_KEY_ID is not set!"
+          if [ -z "$CLOUD_AWS_CREDENTIALS_ACCESS_KEY" ]; then
+          echo "CLOUD_AWS_CREDENTIALS_ACCESS_KEY is not set!"
           exit 1
           fi
           ./gradlew test --no-daemon
