@@ -1,5 +1,6 @@
 package com.api.service;
 
+import com.api.config.AwsS3Properties;
 import com.api.dto.file.PresingedUrlResult;
 import com.api.util.PresignedUrlService;
 import org.junit.jupiter.api.DisplayName;
@@ -23,14 +24,24 @@ class FileServiceTest {
     @Mock
     private PresignedUrlService presignedUrlService;
 
+    @Mock
+    private AwsS3Properties awsS3Properties;
+
+    @Mock
+    private AwsS3Properties.S3Properties s3Properties;
+
     @Test
     @DisplayName("presignedPutUrl이 정상적으로 생성된다.")
     void test_generatePresignedPutUrl() {
 
-        // todo
         // given
-        doReturn("www.modelandphoto.com")
-                .when(presignedUrlService).generatePresignedPutUrl(eq(null), any(String.class), any(String.class));
+        doReturn("modelandphoto")
+                .when(presignedUrlService).generatePresignedPutUrl(any(String.class), any(String.class), any(String.class));
+
+        doReturn(s3Properties).when(awsS3Properties).getS3();
+
+        doReturn("modelandphoto")
+                .when(s3Properties).getBucket();
 
         // when
         String fileId = "FIL_001";
@@ -42,7 +53,7 @@ class FileServiceTest {
         assertThat(presingedUrlResult.getFileId()).isEqualTo(fileId);
 
         // verify
-        verify(presignedUrlService, times(1)).generatePresignedPutUrl(eq(null), any(String.class), any(String.class));
+        verify(presignedUrlService, times(1)).generatePresignedPutUrl(any(String.class), any(String.class), any(String.class));
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.api.util;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.api.config.AwsS3Properties;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -15,14 +15,11 @@ import java.time.Duration;
 @Service
 public class PresignedUrlService {
 
-    @Value("${cloud.aws.credentials.access-key}")
-    String accessKey;
-    @Value("${cloud.aws.credentials.secret-key}")
-    String secretKey;
-    @Value("${cloud.aws.region.static}")
-    String region;
-    @Value("${cloud.aws.s3.endpoint}")
-    String endpoint;
+    private final AwsS3Properties awsS3Properties;
+
+    public PresignedUrlService(AwsS3Properties awsS3Properties) {
+        this.awsS3Properties = awsS3Properties;
+    }
 
     public String generatePresignedPutUrl(String bucketName, String fileId, String contentType) {
         try (S3Presigner s3Presigner = createS3Presigner()) {
@@ -44,9 +41,9 @@ public class PresignedUrlService {
     private S3Presigner createS3Presigner() {
         return S3Presigner.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)))
-                .region(Region.of(region))
-                .endpointOverride(URI.create(endpoint)) // NCP Object Storage의 엔드포인트
+                        AwsBasicCredentials.create(awsS3Properties.getCredentials().getAccessKey(), awsS3Properties.getCredentials().getSecretKey())))
+                .region(Region.of(awsS3Properties.getRegion().getRegionStatic()))
+                .endpointOverride(URI.create(awsS3Properties.getS3().getEndpoint())) // NCP Object Storage의 엔드포인트
                 .build();
     }
 }
