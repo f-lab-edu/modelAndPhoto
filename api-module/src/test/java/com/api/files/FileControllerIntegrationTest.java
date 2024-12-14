@@ -9,6 +9,7 @@ import com.api.dto.file.PresingedUrlResult;
 import com.api.service.FileService;
 import com.api.util.IdGenerator;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +32,7 @@ import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("aws-integration")
 @SpringBootTest
 public class FileControllerIntegrationTest {
 

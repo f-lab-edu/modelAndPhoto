@@ -24,5 +24,14 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        exclude 'aws-integration' // 기본 test 에서 제외함
+    }
+}
+
+// aws 통합 테스트를 위한 별도 task
+task awsIntegrationTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'aws-integration'
+    }
 }
