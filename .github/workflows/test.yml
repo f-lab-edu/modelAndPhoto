@@ -50,4 +50,9 @@ jobs:
           DB_NAME: mydatabase
           DB_USER: myuser
           DB_PASSWORD: mypassword
-        run: ./gradlew test --no-daemon
+        run:
+          if [ -z "$AWS_ACCESS_KEY_ID" ]; then
+          echo "AWS_ACCESS_KEY_ID is not set!"
+          exit 1
+          fi
+          ./gradlew test --no-daemon
