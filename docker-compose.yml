@@ -20,12 +20,13 @@ services:
       context: ./api-module
       dockerfile: Dockerfile
     container_name: api-module
-    image: openjdk:11-jdk-slim
+#    image: openjdk:11-jdk-slim  # Dockerfile에서 지정
     depends_on:
       - mysql
     ports:
       - "8080:8080"
     environment:
+      SPRING_PROFILES_ACTIVE: dev  # 프로파일 설정
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydatabase
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: mypassword
