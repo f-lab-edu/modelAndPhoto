@@ -20,6 +20,7 @@ services:
       context: ./api-module
       dockerfile: Dockerfile
     container_name: api-module
+    image: openjdk:11-jdk-slim
     depends_on:
       - mysql
     ports:
