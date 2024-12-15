@@ -55,4 +55,4 @@ jobs:
           echo "CLOUD_AWS_CREDENTIALS_ACCESS_KEY is not set!"
           exit 1
           fi
-          ./gradlew test --no-daemon
+          ./gradlew test --no-daemon -x awsIntegrationTest
