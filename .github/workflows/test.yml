@@ -42,7 +42,7 @@ jobs:
         env:
           CLOUD_AWS_CREDENTIALS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           CLOUD_AWS_CREDENTIALS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          CLOUD_AWS_REGION_STATIC: ${{ secrets.AWS_REGION }}
+          CLOUD_AWS_REGION_REGION_STATIC: ${{ secrets.AWS_REGION }}
           CLOUD_AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           CLOUD_AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
           DB_HOST: 127.0.0.1
