@@ -8,7 +8,7 @@
 name: Java CI Test with Gradle
 
 on:
-  [ push, pull_request ]
+  [push, pull_request]
 
 jobs:
   run-tests:
@@ -45,6 +45,7 @@ jobs:
           CLOUD_AWS_REGION_REGION_STATIC: ${{ secrets.AWS_REGION }}
           CLOUD_AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           CLOUD_AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+          SPRING_PROFILES_ACTIVE: test
           DB_HOST: 127.0.0.1
           DB_PORT: ${{ job.services.mysql.ports[3306] }}
           DB_NAME: mydatabase

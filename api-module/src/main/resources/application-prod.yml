@@ -11,10 +11,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
-    defer-datasource-initialization: true
-    show-sql: true
+      ddl-auto: none  #운영 환경에서는 none 사용
+    show-sql: false   #SQL 로그 비활성화
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
