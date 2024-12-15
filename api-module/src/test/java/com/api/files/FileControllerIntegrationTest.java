@@ -48,6 +48,7 @@ public class FileControllerIntegrationTest {
     private static final String TEST_IMAGE_PATH = "src/test/resources/test-image.jpg";
     private static final String CONTENT_TYPE = "image/jpeg";
 
+    @Tag("aws-integration")
     @Test
     @DisplayName("presignedURL을 생성하고 생성된 URL로 실제 파일 업로드를 한다.")
     void testGenerateAndUploadFile() throws Exception {
@@ -70,6 +71,7 @@ public class FileControllerIntegrationTest {
         verifyUploadedImage(fileId, CONTENT_TYPE, testImage);
     }
 
+    @Tag("aws-integration")
     @Test
     @DisplayName("대용량 이미지 업로드 테스트")
     void testUploadLargeImage() throws Exception {
