@@ -33,7 +33,7 @@ public class ConversationService {
 
     public List<MessageDto> retrieveMessageInConversation(String conversationId, LocalDateTime startTime, LocalDateTime endTime) {
 
-        List<MessageEntity> messageEntities = messageRepository.retrieveMessageInConversation(conversationId, startTime, endTime);
+        List<MessageEntity> messageEntities = messageRepository.findByConversationIdAndTimestampGreaterThanEqualAndTimestampLessThanEqual(conversationId, startTime, endTime);
 
         return messageEntities.stream()
                 .map(messageEntity -> new MessageDto(

@@ -64,7 +64,7 @@ class ConversationServiceTest {
         LocalDateTime startTime = LocalDateTime.now().minusDays(7);
         LocalDateTime endTime = LocalDateTime.now();
 
-        doReturn(messageEntitiesResponse()).when(messageRepository).retrieveMessageInConversation(any(String.class), any(LocalDateTime.class), any(LocalDateTime.class));
+        doReturn(messageEntitiesResponse()).when(messageRepository).findByConversationIdAndTimestampGreaterThanEqualAndTimestampLessThanEqual(any(String.class), any(LocalDateTime.class), any(LocalDateTime.class));
 
         //when
         List<MessageDto> messageDtos = conversationService.retrieveMessageInConversation(conversationId, startTime, endTime);
@@ -79,7 +79,7 @@ class ConversationServiceTest {
         }
 
         // verify
-        verify(messageRepository, times(1)).retrieveMessageInConversation(any(String.class), any(LocalDateTime.class), any(LocalDateTime.class));
+        verify(messageRepository, times(1)).findByConversationIdAndTimestampGreaterThanEqualAndTimestampLessThanEqual(any(String.class), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
     // 대화방 엔티티 목록
