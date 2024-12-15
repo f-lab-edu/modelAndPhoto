@@ -38,8 +38,3 @@ task awsIntegrationTest(type: Test) {
         includeTags 'aws-integration'
     }
 }
-
-build {
-    dependsOn test
-    dependsOn.remove(awsIntegrationTest)
-}
