@@ -1,42 +1,30 @@
 package com.api.repository;
 
 import com.api.entity.ConversationEntity;
-import com.api.dto.message.MessageRequest;
-import org.springframework.stereotype.Component;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@Component
-public class ConversationRepository {
+@Repository
+public interface ConversationRepository extends JpaRepository<ConversationEntity, String> {
 
-    private Map<String, ConversationEntity> conversationEntityMap = new HashMap<>();
+    @Query("SELECT c FROM ConversationEntity c " +
+            "WHERE JSON_CONTAINS(c.participantIds, :userId) = 1 " +
+            "ORDER BY c.lastMessageTimestamp DESC")
+    List<ConversationEntity> retrieve(@Param("userId") String sessionUserId);
 
-    public List<ConversationEntity> retrieve(String sessionUserId) {
-        return conversationEntityMap.values()
-                .stream()
-                .filter(m -> m.getParticipantIds().contains(sessionUserId))
-                .collect(Collectors.toList());
-    }
+    @Query("SELECT c FROM ConversationEntity c " +
+            "WHERE JSON_CONTAINS(c.participantIds, :sender) = 1 " +
+            "AND JSON_CONTAINS(c.participantIds, :receiver) = 1")
+    Optional<String> getConversationId(
+            @Param("sender") String senderId,
+            @Param("receiver") String receiverId);
 
-    public String getConversationId(MessageRequest messageRequest) {
+    @Override
+    <S extends ConversationEntity> S save(S entity);
 
-        List<String> participantIds = List.of(messageRequest.getSenderId(), messageRequest.getReceiverId());
-
-        return conversationEntityMap.values()
-                .stream()
-                .filter(conversationEntity -> conversationEntity.getParticipantIds().containsAll(participantIds))  // 모든 참여자가 포함되어 있는지
-                .map(ConversationEntity::getConversationId)
-                .findAny().orElse(null);
-    }
-
-    public String createConversation(String newConversationId, MessageRequest messageRequest) {
-
-        conversationEntityMap.put(newConversationId, new ConversationEntity(newConversationId, List.of(messageRequest.getSenderId(), messageRequest.getReceiverId()), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now()));
-
-        return conversationEntityMap.get(newConversationId).getConversationId();
-    }
 }
