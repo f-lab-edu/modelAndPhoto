@@ -14,6 +14,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 //    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.530'
+    implementation 'software.amazon.awssdk:s3:2.20.0'
 
     runtimeOnly 'mysql:mysql-connector-java'
 
@@ -21,5 +24,17 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'aws-integration' // 기본 test 에서 제외함
+    }
+}
+
+// aws 통합 테스트를 위한 별도 task
+task awsIntegrationTest(type: Test) {
+    description = 'Runs AWS Integration tests'
+    group = 'verification'
+
+    useJUnitPlatform {
+        includeTags 'aws-integration'
+    }
 }
