@@ -1,26 +1,32 @@
 package com.api.service;
 
-import com.api.dto.file.FileUploadResponse;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import com.api.config.AwsS3Properties;
+import com.api.dto.file.PresingedUrlResult;
+import com.api.util.PresignedUrlService;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FileService {
 
+    private final AwsS3Properties awsS3Properties;
 
-    public FileUploadResponse upload(MultipartFile file) {
-        // todo ???
+    private final PresignedUrlService presignedUrlService;
 
-        return new FileUploadResponse("file_123"
-                ,"/uploads/files/example.jpg"
-                , LocalDateTime.now());
+    public FileService(AwsS3Properties awsS3Properties, PresignedUrlService presignedUrlService) {
+        this.awsS3Properties = awsS3Properties;
+        this.presignedUrlService = presignedUrlService;
     }
 
-    public void download(String fileId) {
+    public PresingedUrlResult generatePresignedPutUrl(String fileId, String contentType) {
+        if(!contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("이미지 파일의 형식이 아닙니다.");
+        }
 
-        // todo ???
+        String bucketName = awsS3Properties.getS3().getBucket();
 
+        String generatePresignedPutUrl = presignedUrlService.generatePresignedPutUrl(bucketName, fileId, contentType);
+
+        return new PresingedUrlResult(generatePresignedPutUrl, fileId);
     }
 }

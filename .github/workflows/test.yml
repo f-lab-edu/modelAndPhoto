@@ -8,7 +8,7 @@
 name: Java CI Test with Gradle
 
 on:
-  [push, pull_request]
+  [ push, pull_request ]
 
 jobs:
   run-tests:
@@ -40,9 +40,19 @@ jobs:
       # 3. Gradle 테스트 실행
       - name: Run Gradle tests
         env:
+          CLOUD_AWS_CREDENTIALS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          CLOUD_AWS_CREDENTIALS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          CLOUD_AWS_REGION_REGION_STATIC: ${{ secrets.AWS_REGION }}
+          CLOUD_AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          CLOUD_AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
           DB_HOST: 127.0.0.1
           DB_PORT: ${{ job.services.mysql.ports[3306] }}
           DB_NAME: mydatabase
           DB_USER: myuser
           DB_PASSWORD: mypassword
-        run: ./gradlew test --no-daemon
+        run: |
+          if [ -z "$CLOUD_AWS_CREDENTIALS_ACCESS_KEY" ]; then
+          echo "CLOUD_AWS_CREDENTIALS_ACCESS_KEY is not set!"
+          exit 1
+          fi
+          ./gradlew test --no-daemon -x awsIntegrationTest
