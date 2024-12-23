@@ -1,18 +1,44 @@
 package com.api.entity;
 
 import com.api.enums.MessageStatus;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
+@Entity
+@Table(name = "MESSAGE")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MessageEntity {
-
+    @Id
+    @Column(name = "message_id", length = 40, nullable = false)
     private String messageId;
+
+    @Column(name = "conversation_id", length = 40, nullable = false)
     private String conversationId;
+
+    @Column(name = "sender_id", length = 40, nullable = false)
     private String senderId;
+
+    @Column(name = "receiver_id", length = 40, nullable = false)
     private String receiverId;
+
+    @Column(name = "file_id")
     private String fileId;
+
+    @Column(name = "message_content")
     private String messageContent;
+
+    @Column(name = "timestamp")
     private LocalDateTime timestamp;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(name = "message_status", nullable = false)
     private MessageStatus messageStatus;
 
     public MessageEntity(String messageId, String conversationId, String senderId, String receiverId, String fileId, String messageContent, LocalDateTime timestamp, MessageStatus messageStatus) {
@@ -26,67 +52,4 @@ public class MessageEntity {
         this.messageStatus = messageStatus;
     }
 
-    public String getMessageId() {
-        return messageId;
-    }
-
-    public String getConversationId() {
-        return conversationId;
-    }
-
-    public String getSenderId() {
-        return senderId;
-    }
-
-    public String getReceiverId() {
-        return receiverId;
-    }
-
-    public String getFileId() {
-        return fileId;
-    }
-
-    public String getMessageContent() {
-        return messageContent;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public MessageStatus getMessageStatus() {
-        return messageStatus;
-    }
-
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
-
-    public void setConversationId(String conversationId) {
-        this.conversationId = conversationId;
-    }
-
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
-    }
-
-    public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
-    }
-
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
-
-    public void setMessageContent(String messageContent) {
-        this.messageContent = messageContent;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public void setMessageStatus(MessageStatus messageStatus) {
-        this.messageStatus = messageStatus;
-    }
 }

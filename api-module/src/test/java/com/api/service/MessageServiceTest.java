@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,9 +43,9 @@ class MessageServiceTest {
         MessageRequest messageRequest = new MessageRequest("MOD_123", "PHO_456", "메시지내용", null);
 
         doReturn(new MessageEntity("MSG_001", generatedConversationID, "MOD_123", "PHO_456", null, "메시지내용", LocalDateTime.now(), MessageStatus.SENT))
-                .when(messageRepository).createMessage(any(MessageEntity.class));
+                .when(messageRepository).save(any(MessageEntity.class));
 
-        doReturn(generatedConversationID).when(conversationRepository).getConversationId(any(MessageRequest.class));
+        doReturn(Optional.of(generatedConversationID)).when(conversationRepository).getConversationId(any(String.class), any(String.class));
 
         // when
         MessageResponse messageResponse = messageService.send(messageRequest);
@@ -54,8 +55,8 @@ class MessageServiceTest {
         assertThat(messageResponse.getConversationId()).isEqualTo(generatedConversationID);
 
         // verify
-        verify(conversationRepository, times(1)).getConversationId(any(MessageRequest.class));
-        verify(messageRepository, times(1)).createMessage(any(MessageEntity.class));
+        verify(conversationRepository, times(1)).getConversationId(any(String.class), any(String.class));
+        verify(messageRepository, times(1)).save(any(MessageEntity.class));
     }
 
     @Test
@@ -75,8 +76,7 @@ class MessageServiceTest {
         String conversationId = "CON_123";
         String readerId = "PHO_456";
 
-        doReturn(new MessageEntity("MSG_001", conversationId, "MOD_123", readerId, null, "메시지내용", LocalDateTime.now(), MessageStatus.READ))
-                .when(messageRepository).updateStatusRead(any(String.class), any(String.class));
+        doReturn(Optional.of(new MessageEntity("MSG_001", conversationId, "MOD_123", readerId, null, "메시지내용", LocalDateTime.now(), MessageStatus.READ))).when(messageRepository).findById(any(String.class));
 
         // when
         ConversationMessageStatusResponse conversationMessageStatusResponse = messageService.updateStatusRead(conversationId, readerId);
@@ -86,6 +86,6 @@ class MessageServiceTest {
         assertThat(conversationMessageStatusResponse.getMessageStatus()).isEqualTo(MessageStatus.READ);
 
         // verify
-        verify(messageRepository, times(1)).updateStatusRead(any(String.class), any(String.class));
+        verify(messageRepository, times(1)).updateMessageStatus(any(String.class), any(String.class), any(MessageStatus.class));
     }
 }
