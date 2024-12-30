@@ -38,8 +38,9 @@ class MessageControllerTest {
         // 요청 (JSON)
         String senderId = "MOD_123";
         String receiverId = "PHO_456";
+        String conversationId = "COV_001";
 
-        MessageRequestDto requestDto = new MessageRequestDto(senderId, receiverId, "안녕하세요!", "");
+        MessageRequestDto requestDto = new MessageRequestDto(senderId, receiverId, conversationId, "안녕하세요!", "");
 
         when(messageService.send(any(MessageRequest.class)))
                 .thenReturn(new MessageResponse("MSG_001", "CON_001", senderId, receiverId, LocalDateTime.now(), MessageStatus.SENT));
