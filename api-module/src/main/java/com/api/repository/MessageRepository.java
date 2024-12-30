@@ -14,10 +14,6 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<MessageEntity, String> {
 
-    @Override
-    <S extends MessageEntity> S save(S entity);
-
-
     // 특정 수신자의 메시지 상태 업데이트
     @Modifying
     @Query("UPDATE MessageEntity m " +
