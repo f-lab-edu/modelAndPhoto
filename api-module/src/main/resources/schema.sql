@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS MESSAGE;
+DROP TABLE IF EXISTS CONVERSATION_PARTICIPANT;
 DROP TABLE IF EXISTS CONVERSATION;
 DROP TABLE IF EXISTS MATCHING;
 DROP TABLE IF EXISTS USER;
@@ -48,11 +49,25 @@ create table CONVERSATION
 (
     conversation_id        varchar(40)                        not null
         primary key,
-    participant_ids        json                               not null,
     last_message_timestamp datetime                           null,
     created_at             datetime default CURRENT_TIMESTAMP not null,
     updated_at             datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP
 );
+
+create table CONVERSATION_PARTICIPANT
+(
+    participant_id  bigint auto_increment
+        primary key,
+    conversation_id varchar(40) not null,
+    user_id         varchar(40) not null,
+    constraint conversation_user_unique unique (conversation_id, user_id),
+    constraint fk_conversation
+        foreign key (conversation_id) references CONVERSATION (conversation_id)
+            on delete cascade
+);
+
+
+CREATE INDEX idx_conversation_user ON CONVERSATION_PARTICIPANT(conversation_id, user_id);
 
 create table USER
 (

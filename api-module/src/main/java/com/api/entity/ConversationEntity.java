@@ -1,9 +1,9 @@
 package com.api.entity;
 
-import com.api.util.StringListConverter;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
@@ -11,18 +11,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "CONVERSATION")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@Builder
 public class ConversationEntity {
-
     @Id
     @Column(name = "conversation_id", length = 40)
     private String conversationId; // Primary Key
-
-    @Convert(converter = StringListConverter.class)
-    @Column(name = "participant_ids", columnDefinition = "json", nullable = false)
-    private List<String> participantIds; // 대화 참여자 ID 리스트
 
     @Column(name = "last_message_timestamp", nullable = false)
     private LocalDateTime lastMessageTimestamp; // 마지막 메시지 시간
@@ -34,11 +31,14 @@ public class ConversationEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt; // 업데이트 시간
 
-    public ConversationEntity(String conversationId, List<String> participantIds, LocalDateTime lastMessageTimestamp, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConversationParticipantEntity> participants;
+
+    public ConversationEntity(String conversationId, LocalDateTime lastMessageTimestamp, LocalDateTime createdAt, LocalDateTime updatedAt, List<ConversationParticipantEntity> participants) {
         this.conversationId = conversationId;
-        this.participantIds = participantIds;
         this.lastMessageTimestamp = lastMessageTimestamp;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.participants = participants;
     }
 }

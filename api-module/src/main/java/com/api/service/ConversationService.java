@@ -1,13 +1,17 @@
 package com.api.service;
 
 import com.api.dto.conversation.ConversationDto;
-import com.api.repository.ConversationRepository;
 import com.api.dto.message.MessageDto;
+import com.api.entity.ConversationEntity;
+import com.api.entity.ConversationParticipantEntity;
 import com.api.entity.MessageEntity;
+import com.api.repository.ConversationRepository;
 import com.api.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,10 +27,10 @@ public class ConversationService {
     }
 
     public List<ConversationDto> retrieve(String sessionUserId) {
-        return conversationRepository.retrieve(sessionUserId).stream()
+        return conversationRepository.findDistinctByParticipants(sessionUserId).stream()
                 .map(conversationEntity -> new ConversationDto(
                         conversationEntity.getConversationId(),
-                        conversationEntity.getParticipantIds(),
+                        conversationEntity.getParticipants().stream().map(ConversationParticipantEntity::getUserId).collect(Collectors.toList()),
                         conversationEntity.getLastMessageTimestamp()))
                 .collect(Collectors.toList());
     }
@@ -45,4 +49,34 @@ public class ConversationService {
                         messageEntity.getMessageStatus()))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 새로운 대화방 생성 및 저장
+     */
+    @Transactional
+    public ConversationEntity createConversation(String conversationId, List<String> userIds) {
+        // 1. 참여자 리스트 생성
+        List<ConversationParticipantEntity> participants = new ArrayList<>();
+        for (String userId : userIds) {
+            participants.add(
+                    ConversationParticipantEntity.builder()
+                            .userId(userId)
+                            .build()
+            );
+        }
+        // 2. 대화방 생성
+        ConversationEntity conversation = ConversationEntity.builder()
+                .conversationId(conversationId)
+                .createdAt(LocalDateTime.now())
+                .lastMessageTimestamp(LocalDateTime.now())
+                .participants(participants) // 참여자 리스트 설정
+                .build();
+        // 3. 부모-자식 관계 설정 (참여자에 부모 설정)
+        for (ConversationParticipantEntity participant : participants) {
+            participant.setConversation(conversation);
+        }
+        // 4. 저장 및 반환 (CascadeType.ALL로 인해 자식도 자동 저장됨)
+        return conversationRepository.save(conversation);
+    }
+
 }
