@@ -31,7 +31,8 @@ public class ConversationEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt; // 업데이트 시간
 
-    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "conversation_id")
     private List<ConversationParticipantEntity> participants;
 
     public ConversationEntity(String conversationId, LocalDateTime lastMessageTimestamp, LocalDateTime createdAt, LocalDateTime updatedAt, List<ConversationParticipantEntity> participants) {

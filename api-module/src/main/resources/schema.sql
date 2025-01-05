@@ -56,7 +56,7 @@ create table CONVERSATION
 
 create table CONVERSATION_PARTICIPANT
 (
-    participant_id  bigint auto_increment
+    conversation_participant_id  bigint auto_increment
         primary key,
     conversation_id varchar(40) not null,
     user_id         varchar(40) not null,

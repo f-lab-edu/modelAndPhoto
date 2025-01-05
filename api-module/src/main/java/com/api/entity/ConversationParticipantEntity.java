@@ -20,16 +20,15 @@ public class ConversationParticipantEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conversationParticipantId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conversation_id", nullable = false)
-    private ConversationEntity conversation;
+    @Column(name = "conversation_id", nullable = false)
+    private String conversationId;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    public ConversationParticipantEntity(Long conversationParticipantId, ConversationEntity conversation, String userId) {
+    public ConversationParticipantEntity(Long conversationParticipantId, String conversationId, String userId) {
         this.conversationParticipantId = conversationParticipantId;
-        this.conversation = conversation;
+        this.conversationId = conversationId;
         this.userId = userId;
     }
 }

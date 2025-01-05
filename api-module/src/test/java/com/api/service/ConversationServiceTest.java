@@ -128,7 +128,7 @@ class ConversationServiceTest {
                 .build();
         // 3. 부모-자식 관계 설정
         for (ConversationParticipantEntity participant : participants) {
-            participant.setConversation(conversation);
+            participant.setConversationId(conversation.getConversationId());
         }
         return conversation;
     }

@@ -9,7 +9,6 @@ import com.api.repository.ConversationRepository;
 import com.api.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,6 @@ public class ConversationService {
     /**
      * 새로운 대화방 생성 및 저장
      */
-    @Transactional
     public ConversationEntity createConversation(String conversationId, List<String> userIds) {
         // 1. 참여자 리스트 생성
         List<ConversationParticipantEntity> participants = new ArrayList<>();
@@ -73,10 +71,9 @@ public class ConversationService {
                 .build();
         // 3. 부모-자식 관계 설정 (참여자에 부모 설정)
         for (ConversationParticipantEntity participant : participants) {
-            participant.setConversation(conversation);
+            participant.setConversationId(conversation.getConversationId());
         }
         // 4. 저장 및 반환 (CascadeType.ALL로 인해 자식도 자동 저장됨)
         return conversationRepository.save(conversation);
     }
-
 }
