@@ -1,5 +1,6 @@
 package com.api.service;
 
+import com.api.dto.conversation.ConversationCreationResponse;
 import com.api.dto.conversation.ConversationDto;
 import com.api.dto.message.MessageDto;
 import com.api.entity.ConversationEntity;
@@ -7,6 +8,7 @@ import com.api.entity.ConversationParticipantEntity;
 import com.api.entity.MessageEntity;
 import com.api.repository.ConversationRepository;
 import com.api.repository.MessageRepository;
+import com.api.util.IdGenerator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -52,7 +54,10 @@ public class ConversationService {
     /**
      * 새로운 대화방 생성 및 저장
      */
-    public ConversationEntity createConversation(String conversationId, List<String> userIds) {
+    public ConversationCreationResponse createConversation(List<String> userIds) {
+
+        String conversationId = IdGenerator.getGenerateConversationId();
+
         // 1. 참여자 리스트 생성
         List<ConversationParticipantEntity> participants = new ArrayList<>();
         for (String userId : userIds) {
@@ -74,6 +79,8 @@ public class ConversationService {
             participant.setConversationId(conversation.getConversationId());
         }
         // 4. 저장 및 반환 (CascadeType.ALL로 인해 자식도 자동 저장됨)
-        return conversationRepository.save(conversation);
+        ConversationEntity conversationEntity = conversationRepository.save(conversation);
+
+        return new ConversationCreationResponse(conversationEntity.getConversationId(), conversationEntity.getCreatedAt());
     }
 }
