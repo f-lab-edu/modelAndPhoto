@@ -1,5 +1,6 @@
 package com.api.service;
 
+import com.api.dto.conversation.ConversationCreationResponse;
 import com.api.dto.conversation.ConversationDto;
 import com.api.dto.message.MessageDto;
 import com.api.entity.ConversationEntity;
@@ -8,19 +9,24 @@ import com.api.entity.MessageEntity;
 import com.api.enums.MessageStatus;
 import com.api.repository.ConversationRepository;
 import com.api.repository.MessageRepository;
+import com.api.util.IdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -84,6 +90,56 @@ class ConversationServiceTest {
 
         // verify
         verify(messageRepository, times(1)).findByConversationIdAndTimestampGreaterThanEqualAndTimestampLessThanEqual(any(String.class), any(LocalDateTime.class), any(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("대화방 생성 성공")
+    void createConversation_Success() {
+        // Given
+        String user1 = "PHO_001";
+        String user2 = "MOD_001";
+        List<String> userIds = List.of(user1, user2);
+        String conversationId = "CON_001";
+        LocalDateTime now = LocalDateTime.now();
+
+        ConversationEntity expectedConversation = ConversationEntity.builder()
+                .conversationId(conversationId)
+                .createdAt(now)
+                .lastMessageTimestamp(now)
+                .participants(Arrays.asList(
+                        ConversationParticipantEntity.builder()
+                                .userId(user1)
+                                .conversationId(conversationId)
+                                .build(),
+                        ConversationParticipantEntity.builder()
+                                .userId(user2)
+                                .conversationId(conversationId)
+                                .build()
+                ))
+                .build();
+
+        // When
+        when(conversationRepository.save(any(ConversationEntity.class))).thenReturn(expectedConversation);
+
+        ConversationCreationResponse response = conversationService.createConversation(userIds);
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(conversationId).isEqualTo(response.getConversationId());
+        assertThat(response.getCreatedAt()).isNotNull();
+
+        verify(conversationRepository, times(1)).save(any(ConversationEntity.class));
+    }
+
+    @Test
+    @DisplayName("대화방 생성 실패 - 사용자 목록이 null인 경우")
+    void createConversation_Fail_NullUserIds() {
+        // When & Then
+        assertThrows(NullPointerException.class, () -> {
+            conversationService.createConversation(null);
+        });
+
+        verify(conversationRepository, never()).save(any(ConversationEntity.class));
     }
 
     // 대화방 엔티티 목록
