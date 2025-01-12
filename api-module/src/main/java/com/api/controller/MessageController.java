@@ -25,6 +25,7 @@ public class MessageController {
         return ResponseEntity.ok(messageService.send(new MessageRequest(
                                                         request.getSenderId(),
                                                         request.getReceiverId(),
+                                                        request.getConversationId(),
                                                         request.getMessage(),
                                                         request.getFileId())));
     }
