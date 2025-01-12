@@ -14,13 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,22 +43,34 @@ class MessageControllerTest {
 
         MessageRequestDto requestDto = new MessageRequestDto(senderId, receiverId, conversationId, "안녕하세요!", "");
 
-        when(messageService.send(any(MessageRequest.class)))
-                .thenReturn(new MessageResponse("MSG_001", "CON_001", senderId, receiverId, LocalDateTime.now(), MessageStatus.SENT));
+        MessageResponse response = new MessageResponse("MSG_001", "CON_001", senderId, receiverId, LocalDateTime.now(), MessageStatus.SENT);
 
+        when(messageService.send(any(MessageRequest.class)))
+                .thenReturn(CompletableFuture.completedFuture(response));
 
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/messages")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsBytes(requestDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsBytes(requestDto)))
+                .andDo(print())
+                .andExpect(request().asyncStarted()) // 비동기 시작 확인
+                .andReturn()
+                .getAsyncResult(); // 비동기 결과 기다림
+
+        // 비동기 작업 완료 후 결과 검증
+        mockMvc.perform(asyncDispatch(mockMvc.perform(post("/api/v1/messages")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsBytes(requestDto)))
+                        .andExpect(request().asyncStarted())
+                        .andReturn()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.messageId").exists())
-                .andExpect(jsonPath("$.conversationId").exists())
-                .andExpect(jsonPath("$.senderId").value(senderId))
-                .andExpect(jsonPath("$.receiverId").value(receiverId))
+                .andExpect(jsonPath("$.messageId").value("MSG_001"))
+                .andExpect(jsonPath("$.conversationId").value("CON_001"))
+                .andExpect(jsonPath("$.senderId").value("MOD_123"))
+                .andExpect(jsonPath("$.receiverId").value("PHO_456"))
                 .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(MessageStatus.SENT.name()));
+                .andExpect(jsonPath("$.status").value("SENT"));
     }
 
     @Test
@@ -66,8 +79,9 @@ class MessageControllerTest {
         String conversationId = "CON_001";
         ReadStatusUpdateRequest readStatusUpdateRequest = new ReadStatusUpdateRequest(conversationId);
 
+        ConversationMessageStatusResponse conversationMessageStatusResponse = new ConversationMessageStatusResponse(conversationId, MessageStatus.READ);
         when(messageService.updateStatusRead(any(String.class), any(String.class)))
-                .thenReturn(new ConversationMessageStatusResponse(conversationId, MessageStatus.READ));
+                .thenReturn(CompletableFuture.completedFuture(conversationMessageStatusResponse));
 
         // MockMvc를 사용하여 요청을 보냄
         mockMvc.perform(post("/api/v1/messages/conversations/" + conversationId + "/read")

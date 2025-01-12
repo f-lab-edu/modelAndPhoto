@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/messages")
@@ -20,24 +22,26 @@ public class MessageController {
 
     //메시지 전송(파일 전송 가능)
     @PostMapping
-    public ResponseEntity<MessageResponse> sendMessage(@RequestBody @Valid MessageRequestDto request) {
+    public CompletableFuture<ResponseEntity<MessageResponse>> sendMessage(@RequestBody @Valid MessageRequestDto request) {
 
-        return ResponseEntity.ok(messageService.send(new MessageRequest(
-                                                        request.getSenderId(),
-                                                        request.getReceiverId(),
-                                                        request.getConversationId(),
-                                                        request.getMessage(),
-                                                        request.getFileId())));
+        MessageRequest messageRequest = new MessageRequest(
+                request.getSenderId(),
+                request.getReceiverId(),
+                request.getConversationId(),
+                request.getMessage(),
+                request.getFileId());
+        return messageService.send(messageRequest)
+                .thenApply(ResponseEntity::ok);
     }
 
     // 대화방 메시지 읽음 상태 업데이트
     @PostMapping("/conversations/{conversation_id}/read")
     public ResponseEntity<ReadStatusUpdateResponse> updateReadStatus(
             @PathVariable("conversation_id") String conversationId
-            , @RequestBody ReadStatusUpdateRequest request) {
+            , @RequestBody ReadStatusUpdateRequest request) throws ExecutionException, InterruptedException {
 
-        ConversationMessageStatusResponse conversationMessageStatusResponse = messageService.updateStatusRead(conversationId, request.getReaderId());
+        CompletableFuture<ConversationMessageStatusResponse> conversationMessageStatusResponseCompletableFuture = messageService.updateStatusRead(conversationId, request.getReaderId());
 
-        return ResponseEntity.ok(new ReadStatusUpdateResponse(conversationMessageStatusResponse, LocalDateTime.now()));
+        return ResponseEntity.ok(new ReadStatusUpdateResponse(conversationMessageStatusResponseCompletableFuture.get(), LocalDateTime.now()));
     }
 }
